@@ -1,0 +1,1 @@
+"""Configurações, segurança e recursos centrais da aplicação."""
