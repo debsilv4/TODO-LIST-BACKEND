@@ -1,7 +1,14 @@
 .env
 venv/
+<<<<<<< HEAD
 *.pyc
 __pycache__/
 .vscode/
 *.db
 .pytest_cache/
+=======
+__pychache__/
+*._pyc
+.vscode/
+*.db
+>>>>>>> 6131208b045589669a5980e1a8e36cb376c22a53

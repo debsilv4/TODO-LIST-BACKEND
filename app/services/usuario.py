@@ -43,7 +43,14 @@ class UsuarioServico:
         """Autentica e emite o token de acesso."""
         usuario = self.autenticar(email, senha)
         return Sessao(usuario=usuario, token=self._exigir_tokens().emitir(usuario.id))
-
+    
+    def usuario_do_token(self, token: str) -> Usuario:
+        """Devolve o dono de um token válido. """
+        usuario_id = self._exigir_tokens().ler(token)
+        usuario = self._repositorio.buscar_por_id(usuario_id)
+        if usuario is None:
+            raise TokenInvalido()
+        return usuario
     def _exigir_tokens(self) -> TokenJWT:
         if self._tokens is None:
             raise RuntimeError("UsuarioServico foi montado sem emissor de tokens.")

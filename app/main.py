@@ -15,8 +15,6 @@ from app.core.exceptions import (
     NaoAutenticado,
 )
 from app.db.database import criar_tabelas
-# Cada família de erro de domínio corresponde a um código HTTP. A ordem
-# importa: vale o primeiro tipo que casar, do mais específico ao mais geral.
 STATUS_POR_ERRO: tuple[tuple[type[ErroDeDominio], int], ...] = (
     (RecursoNaoEncontrado, 404),
     (EmailJaCadastrado, 409),
@@ -24,7 +22,6 @@ STATUS_POR_ERRO: tuple[tuple[type[ErroDeDominio], int], ...] = (
     (ErroDeDominio, 400),
     (NaoAutenticado, 401),
 )
- 
 @asynccontextmanager
 async def ciclo_de_vida(_app: FastAPI) -> AsyncIterator[None]:
     """Confere a configuração e prepara o banco na subida da aplicação.
@@ -36,7 +33,6 @@ async def ciclo_de_vida(_app: FastAPI) -> AsyncIterator[None]:
     obter_configuracao().segredo_jwt()
     criar_tabelas()
     yield
- 
 app = FastAPI(
     title="Todo List API",
     description="Backend do ToDo List - curso Desenvolvedor Full Stack (SENAC).",
@@ -51,8 +47,10 @@ async def tratar_erro_de_dominio(
     codigo = next(
         (codigo for tipo, codigo in STATUS_POR_ERRO if isinstance(excecao, tipo)), 400
     )
-    return JSONResponse(status_code=codigo, content={"detail": excecao.mensagem})
- 
+    cabecalhos = {"WWW-Authenticate": "Bearer"} if codigo == 401 else None
+    return JSONResponse(
+       status_code=codigo, content={"detail": excecao.mensagem}, headers=cabecalhos
+    )
 def _mensagem_de_validacao(erro: dict[str, Any]) -> tuple[str, str]:
     """Traduz um erro do Pydantic em (campo, mensagem em português)."""
     campo = str(erro["loc"][-1]) if erro.get("loc") else "dados"
@@ -79,12 +77,16 @@ def _mensagem_de_validacao(erro: dict[str, Any]) -> tuple[str, str]:
         # Mensagens dos nossos próprios validadores já estão em português.
         return campo, str(erro.get("msg", "")).removeprefix("Value error, ")
     return campo, mensagens.get(tipo, f"Valor inválido em '{campo}'.")
- 
 @app.exception_handler(RequestValidationError)
 async def tratar_erro_de_validacao(
     _request: Request, excecao: RequestValidationError
 ) -> JSONResponse:
-    """Responde 422 com `detail` sempre em TEXTO, em português."""
+    """Responde 422 com `detail` sempre em TEXTO, em português.
+    
+    O padrão do FastAPI devolve `detail`  como uma lista de objetos em inglês -
+    difícil de mostrar ao usuário. Aqui `detail` traz a primeira mensagem
+    pronta para exibir, e `erros` traz a lista completa,campo a campo.
+    """
     erros = [
         {"campo": campo, "mensagem": mensagem}
         for campo, mensagem in map(_mensagem_de_validacao, excecao.errors())
@@ -93,11 +95,8 @@ async def tratar_erro_de_validacao(
         status_code=422,
         content={"detail": erros[0]["mensagem"] if erros else "Dados inválidos.", "erros": erros},
     )
- 
 app.include_router(usuarios.router)
- 
 @app.get("/", tags=["Status"], summary="Verificar se a API está no ar")
 def raiz() -> dict[str, str]:
     """Confirma que a API está no ar e indica onde está a documentação."""
     return {"mensagem": "Todo List API no ar", "documentacao": "/docs"}
- 

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Versões fixadas: todas foram instaladas  testadas juntas. Sem versão fixa, uma
 # instalação nova ode trazer uma versão maior de alguma biblioteca e quebrar o
 # projeto numa máquina e não na outra
@@ -14,3 +15,7 @@ PyJWT==2.15.1              # tokens de autenticação
 # Somente para desenvolvimento e testes
 pytest==9.1.1
 httpx==0.28.1
+=======
+fastapi
+uvicorn[standard]
+>>>>>>> 6131208b045589669a5980e1a8e36cb376c22a53
