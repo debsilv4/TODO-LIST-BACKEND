@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """Modelos de domínio: as entidades do sistema, com seus dados e suas regras.
 
 Cada entidade é responsável por manter o próprio estado válido: o `Usuario`
@@ -11,3 +12,10 @@ from app.models.tarefa import Tarefa
 from app.models.usuario import Usuario
 
 __all__ = ["Tarefa", "Usuario"]
+=======
+"""Modelos do banco de dados."""
+
+from app.models.usuario import Usuario
+
+__all__ = ["Usuario"]
+>>>>>>> 597d2eec1812248764924f270aa3d343d1591fbe

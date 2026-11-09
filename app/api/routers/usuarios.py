@@ -45,7 +45,11 @@ def entrar(
     "/me",
     response_model=UsuarioOut,
     summary="Consultar o usuário logado",
+<<<<<<< HEAD
     responses={ 401: {"description": "Sem token, ou token inválido/expirado"}},
+=======
+    responses={401: {"description": "Sem token, ou token inválido/expirado"}},
+>>>>>>> 597d2eec1812248764924f270aa3d343d1591fbe
 )
 def quem_sou_eu(usuario: UsuarioAtual) -> UsuarioOut:
     """Devolve os dados de quem é dono do token."""
