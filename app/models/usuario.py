@@ -1,45 +1,13 @@
 
-from __future__ import annotations
-from typing import TYPE_CHECKING
-
-from sqlalchemy import Column, DateTime, Integer, String
-from sqlalchemy.orm import relationship, validates
-from app.core.datas import agora_utc
-from app.core.exceptions import ValorInvalido
-from app.core.security import HashDeSenha
-from app.db.database import Base
-if TYPE_CHECKING:  # só para anotações de tipo; evita importação circular
-    from app.models.tarefa import Tarefa
-
-class Usuario(Base):
-    """Usuário do sistema, dono de um conjunto de tarefas."""
-    __tablename__ = "usuarios"
-
-    id = Column(Integer, primary_key=True, index=True)
-    nome = Column(String(120), nullable=False)
-    email = Column(String(180), nullable=False, unique=True, index=True)
-    # O hash é privado: nenhuma camada acima precisa - nem deve - ler este
-    # valor. Quem quiser conferir uma senha usa `senha_confere`.
-    _senha_hash = Column("senha_hash", String(255), nullable=False)
-    criado_em = Column(DateTime(timezone=True), nullable=False, default=agora_utc)
-    tarefas = relationship(
-        "Tarefa",
-        back_populates="usuario",
-        cascade="all, delete-orphan",
-    )
-
-    def __init__(self, *, nome: str, email: str) -> None:
-        """Cria um usuário ainda sem senha definida."""
-        self.nome = nome
-
 """Modelo de usuário armazenado no banco de dados."""
 
 from datetime import datetime
 
 from sqlalchemy import DateTime, Integer, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 
 from app.core.datas import agora_utc
+from app.core.exceptions import ValorInvalido
 from app.core.security import HashDeSenha
 from app.db.database import Base
 
@@ -54,44 +22,52 @@ class Usuario(Base):
         primary_key=True,
         index=True,
     )
+
     nome: Mapped[str] = mapped_column(
         String(120),
         nullable=False,
     )
+
     email: Mapped[str] = mapped_column(
         String(180),
         unique=True,
         index=True,
         nullable=False,
     )
+
     _senha_hash: Mapped[str] = mapped_column(
         "senha_hash",
         String(255),
         nullable=False,
     )
+
     criado_em: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=agora_utc,
         nullable=False,
     )
 
+    tarefas: Mapped[list["Tarefa"]] = relationship(
+        "Tarefa",
+        back_populates="usuario",
+        cascade="all, delete-orphan",
+    )
+
     def __init__(self, *, nome: str, email: str) -> None:
         self.nome = nome.strip()
-
         self.email = self.normalizar_email(email)
 
     @staticmethod
     def normalizar_email(email: str) -> str:
-
-        """Padroniza o e-mail antes de gravar ou comparar."""
+        """Padroniza o e-mail."""
         return email.strip().lower()
 
     def definir_senha(self, senha: str, hasher: HashDeSenha) -> None:
-        """Grava a senha em forma de hash, descartando a anterior (se houver)."""
+        """Armazena a senha em formato hash."""
         self._senha_hash = hasher.gerar(senha)
 
     def senha_confere(self, senha: str, hasher: HashDeSenha) -> bool:
-        """Informa se a senha apresentada corresponde à cadastrada."""
+        """Confere se a senha está correta."""
         return hasher.verificar(senha, self._senha_hash)
 
     @validates("nome")
@@ -101,24 +77,4 @@ class Usuario(Base):
         return valor.strip()
 
     def __repr__(self) -> str:
-        return f"<Usuario id={self.id} email={self.email!r}>"
-
-        return email.strip().lower()
-
-    def definir_senha(
-        self,
-        senha: str,
-        hasher: HashDeSenha,
-    ) -> None:
-        self._senha_hash = hasher.gerar(senha)
-
-    def senha_confere(
-        self,
-        senha: str,
-        hasher: HashDeSenha,
-    ) -> bool:
-        return hasher.verificar(senha, self._senha_hash)
-
-    def __repr__(self) -> str:
         return f"Usuario(id={self.id!r}, email={self.email!r})"
-

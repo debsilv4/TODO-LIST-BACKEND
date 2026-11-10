@@ -1,11 +1,11 @@
 """Operações de cadastro e login de usuários."""
 from __future__ import annotations
 from dataclasses import dataclass
-<<<<<<< HEAD
+
 from app.core.exceptions import CredenciaisInvalidas, EmailJaCadastrado, TokenInvalido
-=======
+
 from app.core.exceptions import CredenciaisInvalidas, EmailJaCadastrado
->>>>>>> 597d2eec1812248764924f270aa3d343d1591fbe
+
 from app.core.security import HashDeSenha, TokenEmitido, TokenJWT
 from app.models import Usuario
 from app.repositories import UsuarioRepositorio
