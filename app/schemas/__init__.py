@@ -7,7 +7,7 @@ from app.schemas.base import (
     EsquemaDeSaida,
 )
 
-from app.schemas.tarefa import TarefaCreate, TarefaOut
+from app.schemas.tarefa import TarefaCreate, TarefaUpdate, TarefaOut
 
 from app.schemas.usuario import (
     SessaoOut,
@@ -23,6 +23,7 @@ __all__ = [
     "SessaoOut",
     "TarefaCreate",
     "TarefaOut",
+    "TarefaUpdate",
     "UsuarioCreate",
     "UsuarioLogin",
     "UsuarioOut",

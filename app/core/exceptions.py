@@ -64,10 +64,14 @@ class UsuarioNaoEncontrado(RecursoNaoEncontrado):
     """Usuário não encontrado."""
     mensagem = "Usuário não encontrado."
 
+    class TarefaNaoEncontrada(RecursoNaoEncontrado):
+        mensagem = "Tarefa não encontrada"
+
 # Regra de negócio violada - a camada HTTP traduz esta família em 422
 class RegraDeNegocioViolada(ErroDeDominio):
     """A operação é compreensível, mas contraria uma regra do negócio."""
     mensagem = "Operação recusada por uma regra de negócio."
+
 
 class ValorInvalido(RegraDeNegocioViolada):
     """Valor fora do conjunto aceito por um campo do domínio."""
@@ -117,3 +121,7 @@ class TokenInvalido(NaoAutenticado):
     """Token de acesso ausente, expirado, adulterado ou de usuário removido."""
 
     mensagem = "Sessão inválida. Entre novamente."
+
+class AcessoNaoAutorizado(ErroDeDominio):
+    """Tentaiva de mexer em uma tarefa que pertence a outro usuário."""
+    mensagem = "Esta tarefa pertence a outro usuário."

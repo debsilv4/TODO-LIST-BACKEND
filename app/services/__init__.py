@@ -12,9 +12,9 @@ from app.services.tarefa import TarefaServico
 from app.services.usuario import Sessao, UsuarioServico
 
 __all__ = [
+    "NAO_INFORMADO",
+    "AlteracoesDaTarefa",
     "Sessao",
-
     "TarefaServico"
-
     "UsuarioServico",
 ]
