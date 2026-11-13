@@ -2,14 +2,10 @@
 """Endpoints de tarefas: todos exigem login."""
 
 from typing import Annotated
-
 from fastapi import APIRouter, Depends, Response, status
-
 from app.api.dependencies import UsuarioAtual, obter_tarefa_servico
 from app.schemas import TarefaCreate, TarefaUpdate, TarefaOut
-from app.services import TarefaServico
-from app.services.tarefa import AlteracoesDaTarefa
-
+from app.services.tarefa import TarefaServico, AlteracoesDaTarefa
 
 router = APIRouter(
     prefix="/tasks",
@@ -98,10 +94,7 @@ def buscar_task(
     },
 )
 def atualizar_task(
-    tarefa_id: int,
-    dados: TarefaUpdate,
-    usuario: UsuarioAtual,
-    servico: Servico,
+    tarefa_id: int, dados: TarefaUpdate, usuario: UsuarioAtual, servico: Servico
 ) -> TarefaOut:
     alteracoes = _montar_alteracoes(dados)
 

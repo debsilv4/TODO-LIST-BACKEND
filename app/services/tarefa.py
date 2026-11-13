@@ -6,21 +6,16 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date
 from typing import Any
-
 from app.core.exceptions import AcessoNaoAutorizado, TarefaNaoEncontrada
 from app.models import Tarefa
-from app.models.enums import PrioridadeTarefa
+from app.models.enums import PrioridadeTarefa, StatusTarefa
 from app.repositories import TarefaRepositorio
-
-
 NAO_INFORMADO: Any = object()
-
-
 @dataclass(frozen=True)
 class AlteracoesDaTarefa:
     """Campos que um PATCH pediu para alterar."""
-
     titulo: Any = NAO_INFORMADO
+    status: Any = NAO_INFORMADO
     prioridade: Any = NAO_INFORMADO
     prazo: Any = NAO_INFORMADO
 
@@ -75,19 +70,15 @@ class TarefaServico:
     ) -> Tarefa:
         """Aplica as alterações informadas."""
         tarefa = self.buscar(tarefa_id, usuario_id)
-
         if alteracoes.informado("titulo"):
             tarefa.titulo = alteracoes.titulo
-
         if alteracoes.informado("prioridade"):
             tarefa.prioridade = alteracoes.prioridade
-
         if alteracoes.informado("prazo"):
             tarefa.prazo = alteracoes.prazo
-
+        if alteracoes.informado("status"):
+            tarefa.definir_status(StatusTarefa(alteracoes.status))
         return self._tarefas.salvar(tarefa)
-
     def remover(self, tarefa_id: int, usuario_id: int) -> None:
-        """Remove uma tarefa definitivamente."""
         tarefa = self.buscar(tarefa_id, usuario_id)
-        self._tarefas.remover(tarefa)
+        self._tarefas.remover(self.buscar(tarefa_id, usuario_id))

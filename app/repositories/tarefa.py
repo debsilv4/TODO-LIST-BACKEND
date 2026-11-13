@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-from app.models import Tarefa
+from app.models.tarefa import Tarefa
 from app.repositories.base import RepositorioBase
 
 

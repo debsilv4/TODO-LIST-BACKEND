@@ -11,8 +11,9 @@ from app.core.exceptions import NaoAutenticado, TokenInvalido
 from app.core.config import obter_configuracao
 from app.core.security import HashBcrypt, TokenJWT
 from app.db.database import obter_sessao
-from app.models import Usuario
-from app.repositories import UsuarioRepositorio, TarefaRepositorio
+from app.models.usuario import Usuario
+from app.repositories.usuario import UsuarioRepositorio
+from app.repositories.tarefa import TarefaRepositorio
 from app.services.usuario import UsuarioServico
 from app.services.tarefa import TarefaServico
 

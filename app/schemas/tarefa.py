@@ -20,14 +20,10 @@ class TarefaCreate(EsquemaDeEntrada):
 class TarefaUpdate(EsquemaDeEntrada):
     """Campos que podem ser alterados em uma tarefa."""
 
-    titulo: str | None = Field(
-        default=None,
-        min_length=1,
-        max_length=200,
-    )
+    titulo: str | None = Field(default=None, min_length=1, max_length=200)
+    status: StatusTarefa | None = None
     prioridade: PrioridadeTarefa | None = None
     prazo: date | None = None
-
 
 class TarefaOut(EsquemaDeSaida):
     """Representação de uma tarefa nas respostas da API."""
