@@ -2,10 +2,12 @@
 """Repositórios: camada responsável pelo acesso ao banco de dados."""
 
 from app.repositories.base import RepositorioBase
-from app.repositories.tarefa import TarefaRepositorio
+from app.repositories.tarefa import FiltroDeTarefas, PaginaDeTarefas, TarefaRepositorio
 from app.repositories.usuario import UsuarioRepositorio
 
 __all__ = [
+    "FiltroDeTarefas",
+    "PaginaDeTarefas",
     "RepositorioBase",
     "TarefaRepositorio",
     "UsuarioRepositorio",

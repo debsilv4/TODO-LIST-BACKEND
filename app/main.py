@@ -5,6 +5,7 @@ from contextlib import asynccontextmanager
 from typing import Any
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from app.api.routers import tasks, usuarios
 from app.core.config import obter_configuracao
@@ -42,12 +43,21 @@ async def ciclo_de_vida(_app: FastAPI) -> AsyncIterator[None]:
 
 app = FastAPI(
     title="Todo List API",
-    description="Backend do ToDo List - curso Desenvolvedor Full Stack (SENAC).",
-    version="0.9.0",
+    description= ("Backend do ToDo List - curso Desenvolvedor Full Stack (SENAC)."
+                "Para usar as rotas protegidas: faça login em `POST /usuarios/login`,"
+                "copie o `accessToken` e cole no botão **Authorize**."
+            ),
+    version="0.12.0",
     lifespan=ciclo_de_vida,
 )
-
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=(obter_configuracao().origens_permitidas),
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["X-Total-Count"],
+)
 @app.exception_handler(ErroDeDominio)
 async def tratar_erro_de_dominio(
     _request: Request, excecao: ErroDeDominio
@@ -108,12 +118,8 @@ async def tratar_erro_de_validacao(
         status_code=422,
         content={"detail": erros[0]["mensagem"] if erros else "Dados inválidos.", "erros": erros},
     )
-
-
 app.include_router(usuarios.router)
 app.include_router(tasks.router)
-
-
 @app.get("/", tags=["Status"], summary="Verificar se a API está no ar")
 def raiz() -> dict[str, str]:
     """Confirma que a API está no ar e indica onde está a documentação."""

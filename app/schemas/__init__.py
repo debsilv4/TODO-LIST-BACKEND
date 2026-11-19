@@ -7,7 +7,12 @@ from app.schemas.base import (
     EsquemaDeSaida,
 )
 
-from app.schemas.tarefa import TarefaCreate, TarefaUpdate, TarefaOut
+from app.schemas.tarefa import (
+    ResumoOut,
+    TarefaCreate,
+    TarefaUpdate,
+    TarefaOut,
+)
 
 from app.schemas.usuario import (
     SessaoOut,
@@ -20,6 +25,7 @@ __all__ = [
     "DataHoraUTC",
     "EsquemaDeEntrada",
     "EsquemaDeSaida",
+    "ResumoOut",
     "SessaoOut",
     "TarefaCreate",
     "TarefaOut",

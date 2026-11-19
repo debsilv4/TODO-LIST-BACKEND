@@ -25,6 +25,7 @@ class TarefaUpdate(EsquemaDeEntrada):
     prioridade: PrioridadeTarefa | None = None
     prazo: date | None = None
 
+
 class TarefaOut(EsquemaDeSaida):
     """Representação de uma tarefa nas respostas da API."""
 
@@ -37,3 +38,12 @@ class TarefaOut(EsquemaDeSaida):
     criado_em: DataHoraUTC
     atualizado_em: DataHoraUTC
     concluido_em: DataHoraUTC | None
+
+
+class ResumoOut(EsquemaDeSaida):
+    """Resumo das tarefas do usuário."""
+
+    total: int
+    pendentes: int
+    concluidas: int
+    atrasadas: int

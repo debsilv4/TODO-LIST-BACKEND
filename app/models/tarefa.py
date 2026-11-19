@@ -124,7 +124,10 @@ class Tarefa(Base):
             self.concluir(agora)
         else:
             self.reabrir()
- 
+    def esta_atrasada(self, hoje: date | None = None) -> bool:
+        if self.prazo is None or self.status is StatusTarefa.CONCLUIDA:
+            return False
+        return self.prazo < (hoje or date.today())
     def pertence_a(self, usuario_id: int) -> bool:
         """Informa se a tarefa é de um determinado usuário."""
  

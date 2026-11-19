@@ -9,7 +9,7 @@ from typing import Any
 from app.core.exceptions import AcessoNaoAutorizado, TarefaNaoEncontrada
 from app.models import Tarefa
 from app.models.enums import PrioridadeTarefa, StatusTarefa
-from app.repositories import TarefaRepositorio
+from app.repositories import FiltroDeTarefas, PaginaDeTarefas, TarefaRepositorio
 NAO_INFORMADO: Any = object()
 @dataclass(frozen=True)
 class AlteracoesDaTarefa:
@@ -22,8 +22,13 @@ class AlteracoesDaTarefa:
     def informado(self, campo: str) -> bool:
         """Verifica se o cliente enviou este campo."""
         return getattr(self, campo) is not NAO_INFORMADO
+@dataclass(frozen=True)
+class Resumo:
 
-
+    total: int
+    pendentes: int
+    concluidas: int
+    atrasadas: int
 class TarefaServico:
     """Operações sobre as tarefas do usuário autenticado."""
 
@@ -46,9 +51,9 @@ class TarefaServico:
         )
         return self._tarefas.salvar(tarefa)
 
-    def listar(self, usuario_id: int) -> list[Tarefa]:
+    def listar(self, filtro: FiltroDeTarefas) -> PaginaDeTarefas:
         """Lista as tarefas do usuário autenticado."""
-        return self._tarefas.listar(usuario_id)
+        return self._tarefas.listar(filtro)
 
     def buscar(self, tarefa_id: int, usuario_id: int) -> Tarefa:
         """Busca uma tarefa pertencente ao usuário."""
@@ -82,3 +87,15 @@ class TarefaServico:
     def remover(self, tarefa_id: int, usuario_id: int) -> None:
         tarefa = self.buscar(tarefa_id, usuario_id)
         self._tarefas.remover(self.buscar(tarefa_id, usuario_id))
+
+    def resumo(self, usuario_id: int, hoje: date | None = None) -> Resumo:
+        hoje = hoje or date.today()
+        tarefas = self._tarefas.todas_do_usuario(usuario_id)
+        concluidas = sum(1 for t in tarefas if t.status is StatusTarefa.CONCLUIDA)
+
+        return Resumo(
+            total=len(tarefas),
+            pendentes=len(tarefas) - concluidas,
+            concluidas=concluidas,
+            atrasadas=sum(1 for t in tarefas if t.esta_atrasada(hoje)),
+        )

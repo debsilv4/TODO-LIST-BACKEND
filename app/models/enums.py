@@ -47,3 +47,13 @@ _PESO = {
     PrioridadeTarefa.MEDIA: 2,
     PrioridadeTarefa.BAIXA: 3,
 }
+
+class CampoOrdenacao(str, Enum):
+
+    CRIADO_EM = "criadoEm",
+    PRAZO = "prazo"
+    PRIORIDADE = "prioridade",
+
+class Ordem(str, Enum):
+    ASC = "asc"
+    DESC = "desc"
